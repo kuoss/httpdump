@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 )
@@ -30,7 +31,11 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func dump(r *http.Request) (string, http.Header, url.Values, string, error) {
-	info := fmt.Sprintf("%s %s %s%s", r.Proto, r.Method, r.Host, r.URL.RequestURI())
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return "", nil, nil, "", fmt.Errorf("SplitHostPort err: %w", err)
+	}
+	info := fmt.Sprintf("%s %s %s %s%s", ip, r.Proto, r.Method, r.Host, r.URL.RequestURI())
 	bodyBytes, err := io.ReadAll(r.Body)
 	return info, r.Header, r.Form, string(bodyBytes), err
 }

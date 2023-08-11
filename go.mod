@@ -1,4 +1,4 @@
-module github.com/kuoss/httpdump
+module github.com/kuoss/httpinfo
 
 go 1.20
 
